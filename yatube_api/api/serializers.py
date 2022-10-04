@@ -8,10 +8,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 
-            'username', 
-            'first_name', 
-            'last_name', 
+            'id',
+            'username',
+            'first_name',
+            'last_name',
             'post',
             'comment'
         )
@@ -24,11 +24,8 @@ class PostSerializer(serializers.ModelSerializer):
         required=False,
         queryset=Group.objects.all(),
     )
-    publication_date = serializers.DateTimeField(
-        read_only=True,
-        source='pub_date'
-    )
-    author = serializers.PrimaryKeyRelatedField(
+    author = serializers.SlugRelatedField(
+        slug_field='username',
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
@@ -38,7 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'text',
-            'publication_date',
+            'pub_date',
             'author',
             'image',
             'group',
@@ -58,10 +55,12 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    created_date = serializers.DateTimeField(
+    author = serializers.SlugRelatedField(
+        slug_field='username',
         read_only=True,
-        source='created'
+        default=serializers.CurrentUserDefault()
     )
+
     class Meta:
         model = Comment
         fields = (
@@ -69,5 +68,5 @@ class CommentSerializer(serializers.ModelSerializer):
             'author',
             'post',
             'text',
-            'created_date',
+            'created',
         )
